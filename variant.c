@@ -36,16 +36,16 @@ void variant_display(const struct variant *e)
     switch (e->type)
     {
     case TYPE_FLOAT:
-        printf("%f\n", e->type_any.float_v);
+        printf("%f\n", e->value.float_v);
         break;
     case TYPE_CHAR:
-        printf("%c\n", e->type_any.char_v);
+        printf("%c\n", e->value.char_v);
         break;
     case TYPE_INT:
-        printf("%d\n", e->type_any.int_v);
+        printf("%d\n", e->value.int_v);
         break;
     case TYPE_STRING:
-        printf("%s\n", e->type_any.str_v);
+        printf("%s\n", e->value.str_v);
         break;
     default:
         break;
@@ -58,20 +58,20 @@ bool variant_equal(const struct variant *left, const struct variant *right)
     switch (left->type)
     {
     case TYPE_STRING:
-        if (strcmp(left->type_any.string, right->type_any.string))
+        if (strcmp(left->value.string, right->value.string))
             return false;
         return true;
         break;
     case TYPE_CHAR:
-        if (right->type_any.char_v == left->type_any.char_v)
+        if (right->value.char_v == left->value.char_v)
             return true;
         break;
     case TYPE_INT:
-        if (right->type_any.int_v == left->type_any.int_v)
+        if (right->value.int_v == left->value.int_v)
             return true;
         break;
     case TYPE_FLOAT:
-        if (right->type_any.float_v == left->type_any.float_v)
+        if (right->value.float_v == left->value.float_v)
             return true;
         break;
     default:
@@ -88,19 +88,19 @@ int variant_find(const struct variant *array, size_t len, enum type type,
         switch (type)
         {
         case TYPE_CHAR:
-            if (array[j].type_any.char_v == value.char_v)
+            if (array[j].value.char_v == value.char_v)
                 return j;
             break;
         case TYPE_STRING:
-            if (!(strcmp(array[j].type_any.str_v, value.str_v)))
+            if (!(strcmp(array[j].value.str_v, value.str_v)))
                 return j;
             break;
         case TYPE_INT:
-            if (array[j].type_any.int_v == value.int_v)
+            if (array[j].value.int_v == value.int_v)
                 return j;
             break;
         case TYPE_FLOAT:
-            if (array[j].type_any.float_v == value.float_v)
+            if (array[j].value.float_v == value.float_v)
                 return j;
             break;
         default:
@@ -119,10 +119,10 @@ float variant_sum(const struct variant *array, size_t len)
         switch (array[j].type)
         {
         case TYPE_FLOAT:
-            total = total + array[j].type_any.float_v;
+            total = total + array[j].value.float_v;
             break;
         case TYPE_INT:
-            total = total + array[j].type_any.int_v;
+            total = total + array[j].value.int_v;
             break;
         default:
             break;
