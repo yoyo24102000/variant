@@ -25,106 +25,108 @@ struct variant {
     union type_any type_any;
 };
 
-// Function to display the content of a variant
-void variant_display(const struct variant *v) {
-    switch (v->type) {
-        case TYPE_INT:
-            printf("%d\n", v->type_any.integer);
-            break;
-        case TYPE_FLOAT:
-            printf("%f\n", v->type_any.floating);
-            break;
-        case TYPE_CHAR:
-            printf("%c\n", v->type_any.character);
-            break;
-        case TYPE_STRING:
-            printf("%s\n", v->type_any.string);
-            break;
-        case TYPE_NULL:
-            printf("NULL\n");
-            break;
-        default:
-            // Handle invalid type
-            break;
+
+#include "variant.h"
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+void variant_display(const struct variant *e)
+{
+    switch (e->type)
+    {
+    case TYPE_FLOAT:
+        printf("%f\n", e->type_any.float_v);
+        break;
+    case TYPE_CHAR:
+        printf("%c\n", e->type_any.char_v);
+        break;
+    case TYPE_INT:
+        printf("%d\n", e->type_any.int_v);
+        break;
+    case TYPE_STRING:
+        printf("%s\n", e->type_any.str_v);
+        break;
+    default:
+        break;
     }
 }
-
-// Function to check if two variants are equal
-bool variant_equal(const struct variant *left, const struct variant *right) {
-    if (left->type != right->type) {
+bool variant_equal(const struct variant *left, const struct variant *right)
+{
+    if (right->type != left->type)
+        return false;
+    switch (left->type)
+    {
+    case TYPE_STRING:
+        if (strcmp(left->type_any.string, right->type_any.string))
+            return false;
+        return true;
+        break;
+    case TYPE_CHAR:
+        if (right->type_any.char_v == left->type_any.char_v)
+            return true;
+        break;
+    case TYPE_INT:
+        if (right->type_any.int_v == left->type_any.int_v)
+            return true;
+        break;
+    case TYPE_FLOAT:
+        if (right->type_any.float_v == left->type_any.float_v)
+            return true;
+        break;
+    default:
         return false;
     }
-
-    switch (left->type) {
-        case TYPE_INT:
-            return left->type_any.integer == right->type_any.integer;
-        case TYPE_FLOAT:
-            return left->type_any.floating == right->type_any.floating;
+}
+int variant_find(const struct variant *array, size_t len, enum type type,
+                 union type_any value)
+{
+    for (size_t j = 0; j < len; j++)
+    {
+        if (array[j].type != type)
+            continue;
+        switch (type)
+        {
         case TYPE_CHAR:
-            return left->type_any.character == right->type_any.character;
+            if (array[j].type_any.char_v == value.char_v)
+                return j;
+            break;
         case TYPE_STRING:
-            return strcmp(left->type_any.string, right->type_any.string) == 0;
-        case TYPE_NULL:
-            return true; // Two NULL variants are equal
+            if (!(strcmp(array[j].type_any.str_v, value.str_v)))
+                return j;
+            break;
+        case TYPE_INT:
+            if (array[j].type_any.int_v == value.int_v)
+                return j;
+            break;
+        case TYPE_FLOAT:
+            if (array[j].type_any.float_v == value.float_v)
+                return j;
+            break;
         default:
-            // Handle invalid type
-            return false;
-    }
-}
-
-// Function to find an element in a variant array
-int variant_find(const struct variant *array, size_t len, enum type type, union type_any value) {
-    for (size_t i = 0; i < len; ++i) {
-        if (array[i].type == type) {
-            switch (type) {
-                case TYPE_INT:
-                    if (array[i].type_any.integer == value.integer) {
-                        return i;
-                    }
-                    break;
-                case TYPE_FLOAT:
-                    if (array[i].type_any.floating == value.floating) {
-                        return i;
-                    }
-                    break;
-                case TYPE_CHAR:
-                    if (array[i].type_any.character == value.character) {
-                        return i;
-                    }
-                    break;
-                case TYPE_STRING:
-                    if (strcmp(array[i].type_any.string, value.string) == 0) {
-                        return i;
-                    }
-                    break;
-                case TYPE_NULL:
-                    return i; // NULL variants are considered equal
-                default:
-                    // Handle invalid type
-                    return -1;
-            }
+            return -1;
         }
     }
-    return -1; // Element not found
+    return -1;
 }
 
-// Function to calculate the sum of numeric elements in a variant array
-float variant_sum(const struct variant *array, size_t len) {
-    float sum = 0.0;
-
-    for (size_t i = 0; i < len; ++i) {
-        switch (array[i].type) {
-            case TYPE_INT:
-                sum += array[i].type_any.integer;
-                break;
-            case TYPE_FLOAT:
-                sum += array[i].type_any.floating;
-                break;
-            default:
-                // Ignore non-numeric types
-                break;
+float variant_sum(const struct variant *array, size_t len)
+{
+    float total;
+    total = 0;
+    for (size_t j = 0; j < len; ++j)
+    {
+        switch (array[j].type)
+        {
+        case TYPE_FLOAT:
+            total = total + array[j].type_any.float_v;
+            break;
+        case TYPE_INT:
+            total = total + array[j].type_any.int_v;
+            break;
+        default:
+            break;
         }
     }
-
-    return sum;
+    return total;
 }
